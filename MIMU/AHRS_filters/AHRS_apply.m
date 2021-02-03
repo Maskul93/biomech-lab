@@ -3,11 +3,18 @@ function q = AHRS_apply(D, type, Fs, q0)
 % Load Data
 acc = D.acc;
 gyr = D.gyr;
-mag = D.mag;
 
 % Global Variables
 N = length(acc);
 q = zeros(N, 4);
+
+% Check whether the magnetometer exists or not. If not, replace it with
+% zeros.
+if ~isfield(D, 'mag')
+    mag = D.mag;
+else
+    mag = zeros(N,3);
+end
 
 switch type
     
@@ -53,11 +60,7 @@ switch type
         
     case 'JinWuKF_AHRSreal2'
         AHRS = JinWuKF_AHRSreal2();
-        AHRS.SamplePeriod = 1 / Fs;
-    
-    case 'Madgwick2010'
-        AHRS = MadgwickAHRS();
-        AHRS.SamplePeriod = 1 / Fs;   
+        AHRS.SamplePeriod = 1 / Fs; 
              
 end
 

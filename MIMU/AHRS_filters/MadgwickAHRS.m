@@ -1,4 +1,4 @@
-classdef MadgwickAHRS3 < handle
+classdef MadgwickAHRS < handle
 %MADGWICKAHRS Implementation of Madgwick's IMU and AHRS algorithms
 %
 %   For more information see:
