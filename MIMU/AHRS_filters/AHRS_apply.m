@@ -1,4 +1,4 @@
-function q = AHRS_apply(D, type, Fs, q0)
+function q = AHRS_apply(D, type, Fs, q0, beta)
 
 % Load Data
 acc = D.acc;
@@ -10,7 +10,7 @@ q = zeros(N, 4);
 
 % Check whether the magnetometer exists or not. If not, replace it with
 % zeros.
-if ~isfield(D, 'mag')
+if isfield(D, 'mag')
     mag = D.mag;
 else
     mag = zeros(N,3);
@@ -38,6 +38,11 @@ switch type
         AHRS = MadgwickAHRS();
         AHRS.SamplePeriod = 1 / Fs;
         
+        % If one wants to set beta manually, assign it to AHRS
+        if nargin == 5
+            AHRS.Beta = beta;
+        end
+        
     case 'MadgwickAHRSclanek'
         AHRS = MadgwickAHRSclanek();
         AHRS.SamplePeriod = 1 / Fs;
@@ -58,10 +63,15 @@ switch type
         AHRS = AdmirallWilsonAHRS();
         AHRS.SamplePeriod = 1 / Fs;
         
+        % If one wants to set beta manually, assign it to AHRS
+        if nargin == 5
+            AHRS.Beta = beta;
+        end
+        
     case 'JinWuKF_AHRSreal2'
         AHRS = JinWuKF_AHRSreal2();
-        AHRS.SamplePeriod = 1 / Fs; 
-             
+        AHRS.SamplePeriod = 1 / Fs;
+        
 end
 
 % If required, get initial quaternion using TRIAD
@@ -70,18 +80,17 @@ if q0 == 1
 end
 
 % Attitude-Heading Estimation
-
 for t = 1:N
     
     gyr_t = gyr(t,:);
     mag_t = mag(t,:);
     acc_t = acc(t,:);
     
-    if mean(mag_t) == 0
-        AHRS.UpdateIMU(gyr_t,acc_t);
-    else
+    %if mean(mag_t) == 0
+     %   AHRS.UpdateIMU(gyr_t,acc_t);
+    %else
         AHRS.Update(gyr_t,acc_t,mag_t);
-    end
+    %end
     
     q(t, :) = AHRS.Quaternion;
     
