@@ -1,4 +1,4 @@
-function [q,meanTime] = FROE(accGyrMag, settings)
+function q = FROE(accGyrMag, settings)
 % Runs the fast and robust orientation estimation algorithm
 % using the accGyrMag data. Settings are used to pass on the 
 % local earth magnetic field, sampling time and the initial orientation
