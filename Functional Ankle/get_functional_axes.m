@@ -1,4 +1,4 @@
-function [axis_sh_fun, axis_ft_fun] = get_functional_axes(D, side)
+function [axis_sh_fun, axis_ft_fun] = get_functional_axes(D, side, Fs)
 %% GET-FUNCTIONAL AXES
 % Compute the main Ankle functional axis starting from functional
 % calibration gyroscope measurements. Shank main functional axis
@@ -29,8 +29,7 @@ Foot = D.([side, 'F']);
 Shank = D.([side, 'S']);
 
 % Filtering Parameters
-fs = 128;
-[b,a] = butter(4,2/(fs/2), 'low');
+[b,a] = butter(4,2/(Fs/2), 'low');
 beta = 0.001;
 ts = [1 2];
 
@@ -73,16 +72,21 @@ GyroSel2_sh = GyroSel_sh(selected,:);
 GyroSel2_norm_sh = zeros(size(GyroSel2_sh));
 
 % Compute relative orientation between the two frames -- ft_R_sh
-[q0_sh] = get_q0(Shank.acc, Shank.mag);
-[q0_ft] = get_q0(Foot.acc, Foot.mag);
+% [q0_sh] = get_q0(Shank.acc, Shank.mag);
+% [q0_ft] = get_q0(Foot.acc, Foot.mag);
 
-sh_q_g = Madgwick2010(Shank, fs, beta, q0_sh');
-ft_q_g = Madgwick2010(Foot, fs, beta, q0_ft');
+% sh_q_g = Madgwick2010(Shank, fs, beta, q0_sh');
+% ft_q_g = Madgwick2010(Foot, fs, beta, q0_ft');
 
-sh_q_g = reshape_quaternion(sh_q_g, 'spin');
-ft_q_g = reshape_quaternion(ft_q_g, 'spin');
-sh_R_g = SpinConv('QtoDCM', sh_q_g);
-ft_R_g = SpinConv('QtoDCM', ft_q_g);
+sh_q_g = AHRS_apply(Shank, 'JinWuKF_AHRSreal2', Fs, 1);
+ft_q_g = AHRS_apply(Foot, 'JinWuKF_AHRSreal2', Fs, 1);
+
+sh_R_g = quat2rotm(sh_q_g);
+ft_R_g = quat2rotm(ft_q_g);
+% sh_q_g = reshape_quaternion(sh_q_g, 'spin');
+% ft_q_g = reshape_quaternion(ft_q_g, 'spin');
+% sh_R_g = SpinConv('QtoDCM', sh_q_g);
+% ft_R_g = SpinConv('QtoDCM', ft_q_g);
 
 g_R_sh = multitransp(sh_R_g, 1);
 ft_R_sh = multiprod(ft_R_g, g_R_sh, [1 2]);
