@@ -4,8 +4,8 @@ function a_F = get_functional_axes(D, side, Fs)
 % calibration gyroscope measurements. 
 
 % INPUT:    
-%   · D (struct): structure containing the foot (L/R)F and shank (L/R)S
-%   structures during the functional calibration trial.
+%   · D (struct): structure containing the foot (L/R)F and shank (L/R)S s
+%   Each of the signals is a (N x 3) matrix, where N is the number of samples;
 %   · side = either 'L' or 'R'. Required to distinguish the
 %   direction of the angular velocity vector which is opposite in the two 
 %   sides;
