@@ -1,20 +1,20 @@
 
-subjects = get_filenames('./data_17_03');
+subjects = get_filenames('./');
 
-for sb = 2 : length(subjects)
+for sb = 8 %: length(subjects)
     
     current_subject = char(subjects(sb));
     
     % Load calibration parameters for current subject
-    load([current_subject '_statics.mat']);
+    load(['../mat_files/' current_subject '_statics.mat']);
     
-    sessions = get_filenames(['./data_17_03/' current_subject]);
+    sessions = get_filenames(['./' current_subject]);
     sessions = sessions([1,2,4]); % Remove 'Static' session
     
     for ss = 1 : length(sessions)
         
         current_session = char(sessions(ss));
-        files = get_filenames(['./data_17_03/' current_subject '/' current_session]);
+        files = get_filenames(['./' current_subject '/' current_session]);
         
         for fl = 1 : length(files)
             
@@ -28,10 +28,13 @@ for sb = 2 : length(subjects)
                 DD = get_trident(current_file);
                 D = do_calibrate(DD, statics);
                 
-                FOOT = D.SHAN;
-                SHANK = D.FOOT;
-                D.FOOT = FOOT;
-                D.SHAN = SHANK;
+%                 plot(DD.FOOT.gyr)
+
+                
+%                 FOOT = D.SHAN;
+%                 SHANK = D.FOOT;
+%                 D.FOOT = FOOT;
+%                 D.SHAN = SHANK;
                 
                 DATA_RAW.(current_subject).(current_session).(op).(cl) = D;
             end
@@ -43,10 +46,10 @@ for sb = 2 : length(subjects)
                 DD = get_trident(current_file);
                 D = do_calibrate(DD, statics);
                 
-                FOOT = D.SHAN;
-                SHANK = D.FOOT;
-                D.FOOT = FOOT;
-                D.SHAN = SHANK;
+%                 FOOT = D.SHAN;
+%                 SHANK = D.FOOT;
+%                 D.FOOT = FOOT;
+%                 D.SHAN = SHANK;
 
                 DATA_RAW.(current_subject).(current_session).(posnum) = D;
             end
@@ -57,10 +60,10 @@ for sb = 2 : length(subjects)
                 DD = get_trident(current_file);
                 D = do_calibrate(DD, statics);
                 
-                FOOT = D.SHAN;
-                SHANK = D.FOOT;
-                D.FOOT = FOOT;
-                D.SHAN = SHANK;
+%                 FOOT = D.SHAN;
+%                 SHANK = D.FOOT;
+%                 D.FOOT = FOOT;
+%                 D.SHAN = SHANK;
                 
                 DATA_RAW.(current_subject).(current_session).(taskname) = D;
             end

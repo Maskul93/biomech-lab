@@ -1,5 +1,5 @@
 
-subj = 'S6';
+subj = 'S8';
 
 Dacc = get_trident(['./' subj '/Static/StaticACC.csv']);
 Dgyr = get_trident(['./' subj '/Static/StaticGYR.csv']);
@@ -23,4 +23,4 @@ for mn = 1 : length(monitors)
     
 end
 
-save([subj '_statics.mat'], 'statics')
+save(['../mat_files/' subj '_statics.mat'], 'statics')
