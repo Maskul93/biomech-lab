@@ -1,5 +1,5 @@
 
-subj = 'S8';
+subj = 'S11';
 
 Dacc = get_trident(['./' subj '/Static/StaticACC.csv']);
 Dgyr = get_trident(['./' subj '/Static/StaticGYR.csv']);

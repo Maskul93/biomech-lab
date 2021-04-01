@@ -134,7 +134,6 @@ for sb = 1 : length(subjects)
                 PROX = permute(g_R_shA, [3 1 2]);
                 DIST = permute(g_R_ftA, [3 1 2]);
                 
-                % Get angles
                 ang = fanges(PROX, DIST);
                 OUT.(current_subject).KIN.(current_task).(current_op).(current_cal).angles = ang;
                 
@@ -159,4 +158,4 @@ for sb = 1 : length(subjects)
     end
 end
 
-%save('OUT.mat', 'OUT')
+%save('OUT', 'OUT.mat')

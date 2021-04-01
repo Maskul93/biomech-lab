@@ -1,7 +1,7 @@
 
 subjects = get_filenames('./');
 
-for sb = 8 %: length(subjects)
+for sb = 3 %: length(subjects)
     
     current_subject = char(subjects(sb));
     
@@ -22,8 +22,8 @@ for sb = 8 %: length(subjects)
             
             if strcmp(current_session, 'FAN') 
                 
-                op = current_file(8:10);    % extract operator fieldname from filename
-                cl = current_file(12:15);   % extract calibration fieldname from filename
+                op = current_file(9:11);    % extract operator fieldname from filename
+                cl = current_file(13:16);   % extract calibration fieldname from filename
                 
                 DD = get_trident(current_file);
                 D = do_calibrate(DD, statics);
@@ -41,7 +41,7 @@ for sb = 8 %: length(subjects)
             
             if strcmp(current_session, 'POST')
 
-                posnum = current_file(8:end-4);
+                posnum = current_file(9:end-4);
 
                 DD = get_trident(current_file);
                 D = do_calibrate(DD, statics);
@@ -56,7 +56,7 @@ for sb = 8 %: length(subjects)
             
             if strcmp(current_session, 'TASK')
                 
-                taskname = current_file(4:end-4); % get taskname from filename
+                taskname = current_file(5:end-4); % get taskname from filename
                 DD = get_trident(current_file);
                 D = do_calibrate(DD, statics);
                 
