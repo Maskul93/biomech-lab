@@ -69,7 +69,7 @@ for sb = 1 : length(subjects)
                 OUT.(current_subject).FAN.(current_op).(current_cal).a_ft_fun = a_F;
                 
                 %% 2. SHANK VERTICAL AXIS --> Extract vertical shank axes from accelerometer data
-                acc_post = DATA_RAW.(current_subject).POST.(['POST', num2str(cl)]).FOOT.acc;
+                acc_post = DATA_RAW.(current_subject).POST.(['POST', num2str(cl)]).SHAN.acc;
                 axis_sh_v = unit(mean(acc_post));
                 OUT.(current_subject).FAN.(current_op).(current_cal).axis_sh_v = axis_sh_v;
                 
