@@ -5,6 +5,7 @@ function G_R_Tek = markers2dcm(markers, seg_name)
 M1 = markers.([seg_name, num2str(1)]);
 M2 = markers.([seg_name, num2str(2)]);
 M3 = markers.([seg_name, num2str(3)]);
+M4 = markers.([seg_name, num2str(4)]);
 
 for t = 1:length(M1)
     m1 = M1(t,:)';  % Origin Marker

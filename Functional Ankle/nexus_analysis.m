@@ -1,7 +1,7 @@
 subjects = fieldnames(DATA_RAW_NEXUS);
 Fs = 100;
 
-for sb = 2 : length(subjects)
+for sb = 10 : length(subjects)
     current_subject = char(subjects(sb));
     
     tasks = fieldnames(DATA_RAW_NEXUS.(current_subject).TASK);
@@ -41,7 +41,8 @@ for sb = 2 : length(subjects)
                 
                 R_cali_mean = mean_DCM(R_cali);
                 R_foot_mean = mean_DCM(R_foot);
-                OUT_STEREO.(current_subject).axis_ft_l = R_foot_mean' * R_cali_mean(:,1);
+                axis_ft_l = R_foot_mean' * R_cali_mean(:,1);
+                OUT_STEREO.(current_subject).axis_ft_l = axis_ft_l;
                                 
                 %% 4. ANATOMICAL REFERENCE FRAME (ARF) --> Cross product of the obtained axes to get the ARF of both segments
                 % ## ---- SHANK ---- ## %
@@ -69,7 +70,8 @@ for sb = 2 : length(subjects)
                 DIST = permute(g_R_ftA, [3 1 2]);
                 
                 % Get angles
-                ang = fanges(PROX, DIST);
+                ang = fanges_STEREO(PROX, DIST);
+                OUT_STEREO.(current_subject).KIN.(current_task).(current_op).(current_cal).angles = ang;
             end
         end
         

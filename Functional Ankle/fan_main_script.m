@@ -142,21 +142,21 @@ for sb = 1 : length(subjects)
             end
         end
         
-        figure
-        close all
-        plot(OUT.(current_subject).KIN.(current_task).OP1.CAL1.angles(:,1));
-        hold
-        plot(OUT.(current_subject).KIN.(current_task).OP1.CAL2.angles(:,1));
-        plot(OUT.(current_subject).KIN.(current_task).OP1.CAL3.angles(:,1));
-        plot(OUT.(current_subject).KIN.(current_task).OP2.CAL1.angles(:,1));
-        plot(OUT.(current_subject).KIN.(current_task).OP2.CAL2.angles(:,1));
-        plot(OUT.(current_subject).KIN.(current_task).OP2.CAL3.angles(:,1));
-        plot(OUT.(current_subject).KIN.(current_task).OP3.CAL1.angles(:,1));
-        plot(OUT.(current_subject).KIN.(current_task).OP3.CAL2.angles(:,1));
-        plot(OUT.(current_subject).KIN.(current_task).OP3.CAL3.angles(:,1));
-        title(['Subject ' current_subject ' - ' current_task])
-        pause
+%         figure
+%         close all
+%         plot(OUT.(current_subject).KIN.(current_task).OP1.CAL1.angles(:,1));
+%         hold
+%         plot(OUT.(current_subject).KIN.(current_task).OP1.CAL2.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP1.CAL3.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP2.CAL1.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP2.CAL2.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP2.CAL3.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP3.CAL1.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP3.CAL2.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP3.CAL3.angles(:,1));
+%         title(['Subject ' current_subject ' - ' current_task])
+%         pause
     end
 end
 
-%save('OUT.mat', 'OUT')
+save('OUT.mat', 'OUT')
