@@ -1,4 +1,4 @@
-function a_F = get_functional_axes_STEREO(D)
+function a_F = get_functional_axes_STEREO(R)
 %% GET-FUNCTIONAL AXES
 % Compute the main Ankle functional axis starting from functional
 % calibration gyroscope measurements. 
@@ -22,8 +22,15 @@ function a_F = get_functional_axes_STEREO(D)
 
 Fs = 100;
 
-R = markers2dcm(D, 'Foot');
 ang = rotm2eul(R);
+
+
+for column = 1 : 3
+    temp1 = ang(:,column);
+    temp(:,column) = temp1(~isnan(temp1));
+end
+
+ang = temp;
 
 w = zeros(size(ang));
 
