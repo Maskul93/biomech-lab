@@ -43,6 +43,7 @@ end
 
 % Filtered Foot Signal
 FootGyroFilt = filtfilt(b,a,w);
+FootGyroFilt = FootGyroFilt(100:end-100,:);
 
 % Threshold computation as the maximum of maxima
 GyroSel_ft = FootGyroFilt;
@@ -52,6 +53,8 @@ threshold = threshold/2.5;
 % Check which is the main functional axis
 maximum = max(GyroSel_ft);
 [maximum2, column] = max(maximum);
+
+column = 3;
 
 % Select the the angular velocity frames above the threshold only
 selected = GyroSel_ft(:,column) > threshold;

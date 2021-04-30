@@ -1,7 +1,7 @@
 subjects = fieldnames(DATA_NEXUS);
 Fs = 100;
 
-for sb = 2 : length(subjects)
+for sb = 1 : length(subjects)
     current_subject = char(subjects(sb));
     
     tasks = fieldnames(DATA_NEXUS.(current_subject).TASK);
@@ -32,7 +32,7 @@ for sb = 2 : length(subjects)
                 % 2. SHANK Vertical AUX axis from posture
                 current_posture = ['POST' num2str(cl)];
                 POSTURE = DATA_NEXUS.(current_subject).POST.(current_posture).G_R_SHAN;
-                axis_sh_v = mean(POSTURE(:,2,:),3);
+                axis_sh_v = mean(POSTURE(:,2,:),3); % correggi 2 non è la verticale MOCAP2STRUCT
                 OUT_STEREO.(current_subject).ARF.(current_op).(current_cal).axis_sh_v = axis_sh_v;
                 
                 %% 3. FOOT LONG AXIS
@@ -41,7 +41,7 @@ for sb = 2 : length(subjects)
                 
                 R_cali_mean = mean_DCM(R_cali);
                 R_foot_mean = mean_DCM(R_foot);
-                axis_ft_l = R_foot_mean' * R_cali_mean(:,1);
+                axis_ft_l = -R_foot_mean' * R_cali_mean(:,3);        % Era 1, adesso è la 3 (cit. Mike Bongiorno)
                 OUT_STEREO.(current_subject).ARF.(current_op).(current_cal).axis_ft_l = axis_ft_l;
                                 
                 %% 4. ANATOMICAL REFERENCE FRAME (ARF) --> Cross product of the obtained axes to get the ARF of both segments
@@ -65,6 +65,14 @@ for sb = 2 : length(subjects)
                 g_R_shA = multiprod(G_R_SH, R_shA);
                 g_R_ftA = multiprod(G_R_FT, R_ftA);
                 
+                % Posture correction
+%                 r0_sh = mean_DCM(DATA_NEXUS.(current_subject).POST.(current_posture).G_R_SHAN);
+%                 r0_ft = mean_DCM(DATA_NEXUS.(current_subject).POST.(current_posture).G_R_FOOT);
+%                 for tt = 1 : N
+%                     g_R_shA(:,:,tt) = r0_sh' * g_R_shA(:,:,tt);
+%                     g_R_ftA(:,:,tt) = r0_ft' * g_R_ftA(:,:,tt);
+%                 end
+                
                 % Permute dimensions
                 PROX = permute(g_R_shA, [3 1 2]);
                 DIST = permute(g_R_ftA, [3 1 2]);
@@ -74,7 +82,6 @@ for sb = 2 : length(subjects)
                 OUT_STEREO.(current_subject).KIN.(current_task).(current_op).(current_cal).angles = ang;
             end
         end
-        
     end
 end
 

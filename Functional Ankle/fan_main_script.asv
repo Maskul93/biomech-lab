@@ -3,10 +3,10 @@
 % 3. XimuPost --> Estraggo l'asse lungo del piede
 % 4. Terne --> Creo le terne anatomiche per entrambi i segmenti
 % 5. Kin_IMU --> Calcolo la cinematografò
-% % clear all
-% % close all
-% % load './mat_files/DATA_RAW.mat';
-% % load './mat_files/OUT_STEREO.mat';
+clear all
+close all
+load './mat_files/DATA_RAW.mat';
+load './mat_files/OUT_STEREO.mat';
 
 Fs = 1200;
 Fc = 12;
@@ -15,7 +15,7 @@ Wn = Fc /(Fs/2);
 [b, a] = butter(4, Wn, 'low');
 
 subjects = fieldnames(DATA_RAW);
-for sb = 2 %1 : length(subjects)
+for sb = 1 : length(subjects)
     current_subject = char(subjects(sb));
     tasks = fieldnames(DATA_RAW.(current_subject).TASK);
     tasks = tasks(1:3); % Just Gaits
@@ -51,7 +51,7 @@ for sb = 2 %1 : length(subjects)
         g_R_ft = multitransp(ft_R_g);
         g_R_sh = multitransp(sh_R_g);
         N = size(g_R_sh, 3);
-        N_task = length(OUT_STEREO.(current_subject).KIN.(current_task).OP1.CAL1.angles);   % #samples of the task. Used after for 'scaletime'
+        N_task = length(OUT_STEREO.(current_subject).KIN.(current_task).
         
         % Begin calibration process
         operators = fieldnames(DATA_RAW.(current_subject).FAN);
@@ -142,14 +142,28 @@ for sb = 2 %1 : length(subjects)
                 % Get angles
                 ang = fanges(PROX, DIST);
                 ang_filt = filtfilt(b,a, ang);
-                %ang_rs = resample(ang_filt, 1, 12);
-                ang_rs = ScaleTime(ang_filt, 1, N, N_task);
+                ang_rs = resample(ang_filt, 1, 12);
                 OUT_MIMU.(current_subject).KIN.(current_task).(current_op).(current_cal).angles = ang_rs;
                 
      
             end
         end
+        
+%         figure
+%         close all
+%         plot(OUT.(current_subject).KIN.(current_task).OP1.CAL1.angles(:,1));
+%         hold
+%         plot(OUT.(current_subject).KIN.(current_task).OP1.CAL2.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP1.CAL3.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP2.CAL1.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP2.CAL2.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP2.CAL3.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP3.CAL1.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP3.CAL2.angles(:,1));
+%         plot(OUT.(current_subject).KIN.(current_task).OP3.CAL3.angles(:,1));
+%         title(['Subject ' current_subject ' - ' current_task])
+%         pause
     end
 end
 
-%save('OUT_MIMU.mat', 'OUT_MIMU')
+save('OUT_MIMU.mat', 'OUT_MIMU')
