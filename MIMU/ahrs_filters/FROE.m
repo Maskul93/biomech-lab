@@ -1,4 +1,4 @@
-function q = FROE(accGyrMag, settings)
+function [q, R] = FROE(accGyrMag, settings)
 % Runs the fast and robust orientation estimation algorithm
 % using the accGyrMag data. Settings are used to pass on the 
 % local earth magnetic field, sampling time and the initial orientation
@@ -7,7 +7,7 @@ function q = FROE(accGyrMag, settings)
 
 N = length(accGyrMag); % Number of data points
 q = zeros(N,4); % Pre-allocate orientation estimates
-q(1,:) = settings.init_q_nb; % Initial orientation
+q(1,:) = get_q0(accGyrMag(:,1:3), accGyrMag(:,7:9));
 gyrBias = zeros(3,1); % Gyroscope bias
 mn = settings.mn; % Local magnetic field vector
 
@@ -21,7 +21,7 @@ for i = 1:N
     [q(i+1,:),gyrBias, mn] = filterUpdate(acc, gyr, mag, ...
         q(i,:), gyrBias, mn, settings);
 end
-
+    R = quat2rotm(q);
 end
 
 function [q, gyrBias, mn] = filterUpdate(acc, gyr, mag, ...

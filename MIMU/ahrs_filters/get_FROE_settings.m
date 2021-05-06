@@ -2,7 +2,7 @@
 function settings = get_FROE_settings()
 
 % Default Values -----------------------------------------------------------------------
-settings.T = 1 / 100;                                % Default: Fs = 100 Hz
+settings.T = 1 / 1200;                               % Default: Fs = 1200 Hz
 settings.init_q_nb = [1 0 0 0];                      % Default: 0 degrees on all axes
 % settings.sigmaGyr = ones(3,1) * 0*pi/180;
 % settings.sigmaAcc = ones(3,1) * -9.82/100;
