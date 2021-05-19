@@ -1,14 +1,12 @@
-function a_F = get_functional_axes(D, side, Fs)
+function a_F = get_functional_axes(D, Fs)
 %% GET-FUNCTIONAL AXES
 % Compute the main Ankle functional axis starting from functional
 % calibration gyroscope measurements. 
 
 % INPUT:    
-%   · D (struct): structure containing the foot (L/R)F and shank (L/R)S
-%   structures during the functional calibration trial.
-%   · side = either 'L' or 'R'. Required to distinguish the
-%   direction of the angular velocity vector which is opposite in the two 
-%   sides;
+%   · D (struct): structure containing the foot structure during the 
+%     functional calibration trial.
+%   · Fs (scalar): MIMU sampling frequency.
 % OUTPUT:   
 %   · a_F = Ankle main plantar-dorsiflexion axis computed as the unitary 
 %   mean angular velocity vector;
@@ -20,15 +18,11 @@ function a_F = get_functional_axes(D, side, Fs)
 % LAST MODIFIED: 19/03/2021
 % ------------------------------------------------------------------------
 
-% Load Foot and Shank recordings
-Foot = D.([side, 'F']);
-Shank = D.([side, 'S']);
-
 % Filtering Parameters
 [b,a] = butter(4,2/(Fs/2), 'low');
 
 % Filtered Foot Signal
-FootGyroFilt = filtfilt(b,a,Foot.gyr);
+FootGyroFilt = filtfilt(b,a,D.gyr);
 
 % Threshold computation as the maximum of maxima
 GyroSel_ft = FootGyroFilt;
@@ -49,14 +43,6 @@ for i = 1 : 3
     GyroSel2_norm_ft(:,i) = GyroSel2_ft(:,i)./magna(GyroSel2_ft);
 end
 
-% The verse is positive if side = 'R', negative otherwise
-if side == 'L'
-    a_F = -unit(mean(GyroSel2_norm_ft));
-    
-end
-if side == 'R'
-    a_F = unit(mean(GyroSel2_norm_ft));
-end
-
+a_F = unit(mean(GyroSel2_norm_ft));
 
 end
