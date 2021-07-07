@@ -1,4 +1,4 @@
-function PDIEAA = fanges(TPROX,TDIST)
+function PDIEAA = fanges_rb(TPROX,TDIST)
 %% FAN-GES
 % DESCRIPTION: this function computes the kinematic angles of the ankle 
 % joint as it was defined in the 'FAN project'. The convention here used 
@@ -40,20 +40,17 @@ function PDIEAA = fanges(TPROX,TDIST)
 
 % Build versors
 e1 = multitransp(TPROX(:,:,3),2);   % Tibio-Talar Medial-lateral Axis == Z
-e3 = multitransp(TDIST(:,:,2),2);   % Talo-Calcaneal Vertical Axis == y
+e3 = multitransp(TDIST(:,:,1),2);   % Talo-Calcaneal Longitudinal Axis == x
 e2 = unit(cross(e3,e1,3),3);        % Floating Axis
 
-% Plantar-Dorsiflexion (to be checked)
-% sin (a) = -e2 · sh_v = -e2 · TPROX(:,:,2);
-PD = rad2deg( asin(dot(-e2, multitransp(TPROX(:,:,2),2),3)) );
+% Plantar-Dorsiflexion
+PD = rad2deg( asin(dot(-e3, multitransp(TPROX(:,:,2),2),3)) );
 
-% Inversion-Eversion
-% cos (ß) = I · k = TPROX(:,:,1) · TDIST(:,:,3) == dot(e1,e3)
-IE = rad2deg( acos(dot(e1,e3,3)) - pi / 2 );
+% Ab-Adduction
+AA = rad2deg( pi / 2 - acos(dot(e1,e3,3)) );
 
-% Abduction-Adduction
-% sin (gamma) = -e2 · i == -e2 · TDIST(:,:,1)
-AA = rad2deg( asin( dot(-e2, multitransp(TDIST(:,:,3), 2), 3)) ); 
+% Inversion-Eversion 
+IE = rad2deg( asin( dot(e2, multitransp(TDIST(:,:,3), 2), 3)) ); 
 
 % Store angles
 PDIEAA = [PD IE AA];

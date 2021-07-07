@@ -86,11 +86,11 @@ for t = 1:N
     mag_t = mag(t,:);
     acc_t = acc(t,:);
     
-    %if mean(mag_t) == 0
-     %   AHRS.UpdateIMU(gyr_t,acc_t);
-    %else
+    if mean(mag_t) == 0
+       AHRS.UpdateIMU(gyr_t,acc_t);
+    else
         AHRS.Update(gyr_t,acc_t,mag_t);
-    %end
+    end
     
     q(t, :) = AHRS.Quaternion;
     

@@ -56,7 +56,7 @@ DIST = permute( multiprod(g_R_ft, repmat( squeeze(R0_ft), 1, 1, size(g_R_ft, 3) 
 
 %% Get Angles
 angles = fanges(PROX, DIST);
-angles_rb = fanges_rb(PROX, DIST);
+angles_r = fanges(PROX, DIST);
 
 angles(:,1) = detrend(angles(:,1));
 angles(:,2) = detrend(angles(:,2));

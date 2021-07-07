@@ -1,20 +1,23 @@
 subjects = fieldnames(OUT_STEREO);
+subjects = subjects([1:9,11]);
 gaits = {'GAIT1', 'GAIT2', 'GAIT3'};
 operators = {'OP1', 'OP2', 'OP3'};
 calibrations = {'CAL1', 'CAL2', 'CAL3'};
-timings = readtable('./theory/cut_timings.csv');
+timings = readtable('~/Desktop/Functional Ankle/cut_timings.csv');
 ti = timings.ti;
 tf = timings.tf;
 idx = 0;
 
-PD_intra = [ ];
-PD_inter = [ ];
-PD_intra_stereo = [ ];
-PD_inter_stereo = [ ];
-arch_intra = [ ];
-arch_inter = [ ];
-arch_lfm = [ ];
-arch_acc = [ ];
+intra_op = [ ];
+inter_op = [ ];
+intra_subj = [ ];
+inter_subj = [ ];
+
+arch_intra_op = [ ];
+arch_inter_op = [ ];
+arch_intra_subj = [ ];
+
+y_sq = [ ];
 
 for sb = 1 : length(subjects)
     subj = char(subjects(sb));
@@ -28,43 +31,55 @@ for sb = 1 : length(subjects)
         for op = 1 : length(operators)
             oper = char(operators(op));
             
-            PD_intra = [PD_intra; OUT_MIMU.(subj).KIN.(gait).(oper).CAL1.angles(ti(idx):tf(idx),1), ...
+            intra_op = [intra_op; OUT_MIMU.(subj).KIN.(gait).(oper).CAL1.angles(ti(idx):tf(idx),1), ...
                 OUT_MIMU.(subj).KIN.(gait).(oper).CAL2.angles(ti(idx):tf(idx),1), ...
                 OUT_MIMU.(subj).KIN.(gait).(oper).CAL3.angles(ti(idx):tf(idx),1)];
             
-            PD_inter = [PD_inter, PD_intra];    % Append the 3 calibrations
-            intra = get_rmse(PD_intra);         % Compute mean RMSE "INTRA"
-            arch_intra = [arch_intra; {subj}, {gait}, {oper}, {intra}]; % Store into archive
-            PD_intra = [ ];                     % Clear intra variables
-            
-            % Stereo
-            PD_inter_stereo = [PD_inter_stereo, OUT_STEREO.(subj).KIN.(gait).(oper).CAL1.angles(ti(idx):tf(idx),1), ...
-                OUT_STEREO.(subj).KIN.(gait).(oper).CAL2.angles(ti(idx):tf(idx),1), ...
-                OUT_STEREO.(subj).KIN.(gait).(oper).CAL3.angles(ti(idx):tf(idx),1)];
+            inter_op = [inter_op, intra_op];    % Append the 3 calibrations
+            sigma_intra_op = get_sigma(intra_op);         % Compute sigma Intra-Operator
+            arch_intra_op = [arch_intra_op; {subj}, {gait}, {oper}, {sigma_intra_op}]; % Store into archive
+            intra_op = [ ];                     % Clear intra variables
             
         end
         
         % Inter operator
-        inter = get_rmse(PD_inter);             % Compute mean RMSE "INTER"
-        arch_inter = [arch_inter; {subj}, {gait}, {inter}]; % Store into archive
+        sigma_inter_op = get_sigma(inter_op);             % Compute mean sigma Inter-Operator
+        arch_inter_op = [arch_inter_op; {subj}, {gait}, {sigma_inter_op}]; % Store into archive
         
-        % Reference curve for LFM
-        B_real = mean(PD_inter_stereo, 2)';
-        B = ScaleTime(B_real, 1, length(B_real), 100);
-        A = ScaleTime(PD_inter, 1, length(B_real), 100)';
-        [r2, a1, a0] = linfit2ref(A, B);
-        arch_lfm = [arch_lfm; {subj}, {gait}, {a1}, {a0}, {r2}, {sqrt(r2)}];
-        
-        PD_inter = [ ];                         % Clear inter variable
-        PD_inter_stereo = [ ];
+        % Append and Normalize the 9 gait cycles of the same subject
+        intra_subj = [intra_subj, ScaleTime(inter_op, 1, size(inter_op, 1), 100)];
+        inter_op = [ ];                         % Clear Inter-Operator variable
     end
+    
+    sigma_intra_subj = get_sigma(intra_subj);        % Compute sigma Intra-Subject
+    arch_intra_subj = [arch_intra_subj; {subj}, {sigma_intra_subj}];
+    
+    inter_subj = [inter_subj, intra_subj];
+    
+    intra_subj = [ ];   % Clear Intra-Subject variable
 end
 
-writetable(cell2table(arch_intra, 'VariableNames', {'subj', 'gait', 'operator', 'rmse'}), './theory/rmse_intra.csv', 'WriteVariableNames', 1)
-writetable(cell2table(arch_inter, 'VariableNames', {'subj', 'gait', 'rmse'}), './theory/rmse_inter.csv', 'WriteVariableNames', 1)
-writetable(cell2table(arch_lfm, 'VariableNames', {'subj', 'gait', 'a1', 'a0', 'r2', 'r'}), './theory/lfm.csv', 'WriteVariableNames', 1)
+sigma_inter_subj = get_sigma(inter_subj);    % Compute sigma Inter-Subject
+
 
 % Private function to improve code readability
-function y = get_rmse(x)
-    y = mean(rms(x - mean(x,2)),2);
+function [sigma_source, y, y_sq] = get_sigma(x)
+    T = size(x, 1);
+    p = size(x, 2);
+    x_mean = mean(x,2);
+        
+    for j = 1 : p
+        
+        num = 0;
+        
+        for i = 1 : T
+            num = num + (x_mean(i) - x(i,j))^2;
+        end
+        
+        y_sq(j) = num / T;
+        % y(j) = sqrt(num / T);
+        
+    end
+    
+    sigma_source = sqrt( sum(y_sq) / (p - 1) );     % Eq. 2.4
 end

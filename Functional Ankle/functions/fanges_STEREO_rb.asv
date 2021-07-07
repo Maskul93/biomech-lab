@@ -38,22 +38,21 @@ function PDIEAA = fanges(TPROX,TDIST)
 % LAST MODIFIED: 19/03/2021
 % ------------------------------------------------------------------------
 
-% Build versors
-e1 = multitransp(TPROX(:,:,3),2);   % Tibio-Talar Medial-lateral Axis == Z
-e3 = multitransp(TDIST(:,:,2),2);   % Talo-Calcaneal Vertical Axis == y
+% % Build versors
+e1 = multitransp(TPROX(:,:,1),2);   % Tibia-Fibula Medial-lateral Axis == Z
+e3 = multitransp(TDIST(:,:,3),2);   % Calcaneous Vertical Axis == y
 e2 = unit(cross(e3,e1,3),3);        % Floating Axis
 
 % Plantar-Dorsiflexion (to be checked)
 % sin (a) = -e2 · sh_v = -e2 · TPROX(:,:,2);
-PD = rad2deg( asin(dot(-e2, multitransp(TPROX(:,:,2),2),3)) );
+PD = rad2deg( asin(dot(-e3, multitransp(TPROX(:,:,2),2),3)) );
 
-% Inversion-Eversion
-% cos (ß) = I · k = TPROX(:,:,1) · TDIST(:,:,3) == dot(e1,e3)
-IE = rad2deg( acos(dot(e1,e3,3)) - pi / 2 );
+% Abduction-Adduction
+AA = rad2deg( pi / 2 - acos(dot(e1,e3,3)) );
 
 % Abduction-Adduction
 % sin (gamma) = -e2 · i == -e2 · TDIST(:,:,1)
-AA = rad2deg( asin( dot(-e2, multitransp(TDIST(:,:,3), 2), 3)) ); 
+AA = rad2deg( asin( dot(-e2, multitransp(TDIST(:,:,1), 2), 3)) ); 
 
 % Store angles
 PDIEAA = [PD IE AA];

@@ -11,7 +11,7 @@ h = waitbar(0,'0%', 'Name', 'P favòr spitt...');
 cycles = length(subjects) * length(gaits) * length(ops) * length(cals);
 iter = 1;
 
-for sb = 1 : length(subjects)
+for sb = 2 : length(subjects)
     subj = char(subjects(sb));
     
     for ts = 1 : length(gaits)

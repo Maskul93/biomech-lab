@@ -33,5 +33,6 @@ PROX = permute( multiprod(GAIT.G_R_SHAN, repmat(R0_sh, 1, 1, size(GAIT.G_R_SHAN,
 DIST = permute( multiprod(GAIT.G_R_FOOT, repmat(R0_ft, 1, 1, size(GAIT.G_R_FOOT, 3) ) ), [3 1 2] );
 
 angles = fanges_STEREO(PROX, DIST);
+angles_rb = fanges_STEREO_rb(PROX, DIST);
 
 end
